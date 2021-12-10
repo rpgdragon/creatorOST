@@ -24,3 +24,9 @@ hs_err_pid*
 
 target/
 target/*
+
+errOST.txt
+nbactions.xml
+nbactions-release-profile.xml
+outOST.txt
+token.txt
