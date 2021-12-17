@@ -128,7 +128,9 @@ public class ReproductorCanciones {
             //antes de apagar el equipo hay que proceder a borrar el registro
             PeticionDeleteNombreDisco d2 = new PeticionDeleteNombreDisco(token,d1.getNombreDisco());
             d2.realizarPeticion();
-            apagarEquipo();
+            //esperams 1 seg a que se propague
+            Thread.sleep(1000);
+            //apagarEquipo();
            }
            else{
               System.exit(0);
@@ -210,6 +212,17 @@ public class ReproductorCanciones {
     }
  
     private void actualizarCancionVentana(Cancion cancionactual) {
+        Font font = null;
+        if(cancionactual.getNombre_cancion().length()>100){
+            font = new Font("SansSerif", Font.BOLD, 22);
+        }
+        if(cancionactual.getNombre_cancion().length()>50 && cancionactual.getNombre_cancion().length()<= 100){
+            font = new Font("SansSerif", Font.BOLD, 26);
+        }
+        if(cancionactual.getNombre_cancion().length()<=50){
+            font = new Font("SansSerif", Font.BOLD, 30);
+        }        
+        textocancion.setFont(font);
         getTextocancion().setText(cancionactual.getNombre_cancion());
     }
 

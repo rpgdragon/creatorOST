@@ -28,7 +28,7 @@ public class PeticionNombreDisco extends PeticionWeb {
         if(nombreDisco==null || nombreDisco.isEmpty()){
            throw new Exception("Nombre de disco vacio");
         }
-        if(nombreDisco.startsWith("ERROR:")){
+        if(nombreDisco.startsWith(Constantes.ERROR)){
           String aux = nombreDisco;
           nombreDisco=null;
           throw new Exception(aux);

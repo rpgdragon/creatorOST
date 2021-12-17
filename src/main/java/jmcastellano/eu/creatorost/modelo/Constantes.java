@@ -41,5 +41,6 @@ public class Constantes {
     public static final long TIEMPO_ARRANQUE = 20000;
     public static final int MIN_DURACION=10;
     public static final int MAX_DURACION=600;
+    public static final String ERROR="ERROR:";
 
 }

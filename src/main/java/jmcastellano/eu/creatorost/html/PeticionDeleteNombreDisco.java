@@ -4,6 +4,8 @@
  */
 package jmcastellano.eu.creatorost.html;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import jmcastellano.eu.creatorost.modelo.Constantes;
@@ -24,9 +26,17 @@ public class PeticionDeleteNombreDisco extends PeticionWeb {
    protected void realizarAccion(URL url) throws Exception{
         HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
         httpCon.setDoOutput(true);
-        httpCon.setRequestProperty("Content-Type", "application/x-www-form-urlencoded" );
         httpCon.setRequestMethod("DELETE");
         httpCon.connect();
+        BufferedReader br = new BufferedReader(new InputStreamReader((httpCon.getInputStream())));
+        StringBuilder sb = new StringBuilder();
+        String output;
+        while ((output = br.readLine()) != null) {
+            sb.append(output);
+        }
+        if(sb.toString()!=null && !sb.toString().isEmpty() && sb.toString().startsWith(Constantes.ERROR)){
+           throw new Exception("Se ha producido un error en la respuesta");
+        }
    }
     
 }
