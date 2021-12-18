@@ -16,6 +16,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
@@ -113,7 +114,7 @@ public class ReproductorCanciones {
                    lcancion.add(c);
                 }             
             }
-
+           Collections.sort(lcancion);
            //ok todo listo, ahora es hora de iniciar la reproducción
            iniciarGrabacion(d1.getNombreDisco());
            //ahora empezamos a reproducir
@@ -130,7 +131,7 @@ public class ReproductorCanciones {
             d2.realizarPeticion();
             //esperams 1 seg a que se propague
             Thread.sleep(1000);
-            //apagarEquipo();
+            apagarEquipo();
            }
            else{
               System.exit(0);
@@ -187,7 +188,7 @@ public class ReproductorCanciones {
             textocancion.setFont(font);
             textocancion.setBackground(Color.WHITE);
             textocancion.setOpaque(true);
-            textocancion.setBounds(0, 598, 1262, 75);
+            textocancion.setBounds(0, 630, 1280, 75);
             Border border = BorderFactory.createLineBorder(Color.BLACK, 2);
             textocancion.setBorder(border);
         }

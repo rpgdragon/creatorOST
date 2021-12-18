@@ -9,7 +9,7 @@ package jmcastellano.eu.creatorost.modelo;
  *
  * @author pi
  */
-public class Cancion {
+public class Cancion implements Comparable<Cancion> {
     
     private String nombre_cancion;
     
@@ -23,6 +23,10 @@ public class Cancion {
 
     public void setNombre_cancion(String nombre_cancion) {
         this.nombre_cancion = nombre_cancion;
+    }
+    
+    public int compareTo(Cancion c){
+        return this.nombre_cancion.compareTo(c.getNombre_cancion());
     }
     
 }
