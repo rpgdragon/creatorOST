@@ -88,8 +88,6 @@ public class ReproductorCanciones {
             if(!imagen.exists()){
                throw new CreatorOSTException("Imagen OST no descargada");
             }
-            //abrimos el OBS
-            inicializarOBS();
             //abrimos la ventana
             inicializarVentana(d1.getNombreDisco());
             //ok, hora de descargar el disco
@@ -364,18 +362,6 @@ public class ReproductorCanciones {
         catch(IOException | InterruptedException e){
             throw new CreatorOSTException(e.getMessage());
         }
-    }
-
-    private void inicializarOBS() throws IOException,InterruptedException {
-        Process p;
-        if(Utils.windowsOrLinux()){
-            p = Runtime.getRuntime().exec("cmd /c start /d \"C:\\Program Files\\obs-studio\\bin\\64bit\\\" obs64.exe --profile \"OST\" --scene \"OST\" --minimize-to-tray");
-        }
-        else{
-             //TODO revisar
-            p = Runtime.getRuntime().exec("obs --profile \"OST\" --scene \"OST\" --minimize-to-tray");
-        }
-        p.waitFor(10, TimeUnit.SECONDS);
     }
 
     private void iniciarGrabacion(String nombreDisco) throws AWTException{
