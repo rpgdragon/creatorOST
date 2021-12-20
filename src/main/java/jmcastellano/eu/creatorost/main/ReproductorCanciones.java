@@ -293,7 +293,13 @@ public class ReproductorCanciones {
 
     private String leerToken() throws FileNotFoundException, CreatorOSTException{
        //el fichero esta en la raiz de donde se ejecuta el programa
-       File f = new File("./token.txt");
+       File f;
+       if(Utils.windowsOrLinux()){
+           f = new File(Utils.dameRutaWindowsBasic() + "token.txt");
+       }else{
+           f = new File(Constantes.RUTA_UNIX_BASICA + "token.txt");
+       }
+
        //Si llega aqui es que al menos existe el fichero
        Scanner lector = new Scanner(f);
        if(!lector.hasNextLine()){

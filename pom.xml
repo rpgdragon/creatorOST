@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>jmcastellano.eu</groupId>
     <artifactId>creatorost</artifactId>
-    <version>1.1.2</version>
+    <version>1.1.3</version>
     <packaging>jar</packaging>
     <build>
         <resources>
@@ -25,7 +25,7 @@
      <configuration>
       <transformers>
        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-        <mainClass>jmcastellano.eu.javavideoproducer.main.Main</mainClass>
+        <mainClass>jmcastellano.eu.creatorost.main.Main</mainClass>
        </transformer>
       </transformers>
      </configuration>
