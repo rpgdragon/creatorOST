@@ -28,14 +28,14 @@ import javax.swing.border.Border;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
 import jmcastellano.eu.creatorost.exceptions.CreatorOSTException;
-import jmcastellano.eu.creatorost.html.PeticionDeleteNombreDisco;
-import jmcastellano.eu.creatorost.html.PeticionImagen;
-import jmcastellano.eu.creatorost.html.PeticionPython;
-import jmcastellano.eu.creatorost.html.PeticionNombreDisco;
 import jmcastellano.eu.creatorost.modelo.Cancion;
 import jmcastellano.eu.creatorost.modelo.Constantes;
 import jmcastellano.eu.creatorost.utils.Logger;
 import jmcastellano.eu.creatorost.utils.Utils;
+import jmcastellano.eu.utilidades.webrequest.PeticionDescarga;
+import jmcastellano.eu.utilidades.webrequest.PeticionGET;
+import jmcastellano.eu.utilidades.webrequest.PeticionNotGET;
+import jmcastellano.eu.utilidades.webrequest.modelo.Metodo;
 
 /**
  *
@@ -53,27 +53,30 @@ public class ReproductorCanciones {
             comprobarCarpetaSave();
             comprobarCarpetaScripts();
             //en primer lugar vemos si tenemos que bajar el script o no.
-            PeticionPython kh = new PeticionPython(Constantes.URL_SCRIPT_KHINSIDER,Constantes.NOMBRE_SCRIPT_KHINSIDER);
-            PeticionPython des = new PeticionPython(Constantes.URL_SCRIPT_DESCRIPCION,Constantes.NOMBRE_SCRIPT_DESCRIPCION);
-            kh.descargarSiNoExiste();
-            des.descargarSiNoExiste();
+            PeticionDescarga kh = new PeticionDescarga(Constantes.URL_SCRIPT_KHINSIDER,Utils.dameRutaScripts() + Constantes.NOMBRE_SCRIPT_KHINSIDER,false);
+            PeticionDescarga des = new PeticionDescarga(Constantes.URL_SCRIPT_DESCRIPCION,Utils.dameRutaScripts() + Constantes.NOMBRE_SCRIPT_DESCRIPCION,false);
+            kh.realizarPeticion();
+            des.realizarPeticion();
             //buscamos el Token utilizado para las peticiones
             String token = leerToken();
             //mientras en paralelo ejecutamos la petición del nombre del disco
-            PeticionNombreDisco d1 = new PeticionNombreDisco(token);
+            PeticionGET d1 = new PeticionGET(Constantes.URL_DISCOGRAFIA + "index.php");
+            d1.setEsQuery(true);
+            d1.setLeerRespuesta(true);
+            d1.addParametro("token", token);
             int indice = 0;
             d1.realizarPeticion();
             do{   
                 Thread.sleep(1000);
                 indice++;
             } while(indice<10 && d1.isEnEjecucion());
-            if(d1.getNombreDisco()==null || d1.getNombreDisco().isEmpty() || d1.getNombreDisco().startsWith("ERROR:")){
+            if(d1.getRespuesta()==null || d1.getRespuesta().isEmpty() || d1.getRespuesta().startsWith("ERROR:")){
                Logger.getInstance().outString("Finalizamos programa por no tener el nombre del disco a mirar");
             }
 
-            Logger.getInstance().outString("OST a grabar:" + d1.getNombreDisco());
+            Logger.getInstance().outString("OST a grabar:" + d1.getRespuesta());
             //descargamos la imagen del disco que vamos a visualizar
-            PeticionImagen dimg = new PeticionImagen(d1.getNombreDisco());
+            PeticionDescarga dimg = new PeticionDescarga(Constantes.URL_DISCOGRAFIA + d1.getRespuesta() + ".jpg",Utils.dameRutaTemp() + d1.getRespuesta() + ".jpg",true);
             dimg.realizarPeticion();
             indice = 0;
             do{
@@ -83,19 +86,19 @@ public class ReproductorCanciones {
             
             //vamos a comprobar si la imagen se ha bajado
             String ruta = Utils.dameRutaTemp();
-            File imagen = new File(ruta + d1.getNombreDisco() + ".jpg");
+            File imagen = new File(ruta + d1.getRespuesta() + ".jpg");
             if(!imagen.exists()){
                throw new CreatorOSTException("Imagen OST no descargada");
             }
             //abrimos el OBS
             inicializarOBS();
             //abrimos la ventana
-            inicializarVentana(d1.getNombreDisco());
+            inicializarVentana(d1.getRespuesta());
             //ok, hora de descargar el disco
             //para ello tenemos que invocar el script de Python descargado
-            ejecutarScriptKhinsider(d1.getNombreDisco());
+            ejecutarScriptKhinsider(d1.getRespuesta());
             //tambien ejecutamos el de descripcion para generar las pistas de audio
-            ejecutarScriptDescripcion(d1.getNombreDisco());
+            ejecutarScriptDescripcion(d1.getRespuesta());
         
             //ok si llega aqui, esta todo lo necesario para grabar el disco
             //Primero buscamos todos los mp3 que hay
@@ -115,22 +118,26 @@ public class ReproductorCanciones {
             }
 
            //ok todo listo, ahora es hora de iniciar la reproducción
-           iniciarGrabacion(d1.getNombreDisco());
+           iniciarGrabacion(d1.getRespuesta());
            //ahora empezamos a reproducir
            for(Cancion c: lcancion){
                reproducirCancion(c);
            }
 
-           detenerGrabacion(d1.getNombreDisco());
+           detenerGrabacion(d1.getRespuesta());
 
            //miramos si es produccion por que hay que hacer más cosas
            if(Main.isIsProduction()){
             //antes de apagar el equipo hay que proceder a borrar el registro
-            PeticionDeleteNombreDisco d2 = new PeticionDeleteNombreDisco(token,d1.getNombreDisco());
+            PeticionNotGET d2 = new PeticionNotGET(Constantes.URL_DISCOGRAFIA + "index.php", Metodo.DELETE);
+            d2.addParametro("token", token);
+            d2.addParametro("disco",d1.getRespuesta());
+            d2.setLeerRespuesta(false);
+            d2.setEsQuery(true);
             d2.realizarPeticion();
             //esperams 1 seg a que se propague
             Thread.sleep(1000);
-            //apagarEquipo();
+            apagarEquipo();
            }
            else{
               System.exit(0);

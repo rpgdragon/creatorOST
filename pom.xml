@@ -50,6 +50,11 @@
             <artifactId>mp3spi</artifactId>
             <version>1.9.5.4</version>
           </dependency>
+          <dependency>
+		<groupId>jmcastellano.eu.utilidades</groupId>
+		<artifactId>webrequest</artifactId>
+		<version>[1.0,)</version>
+	</dependency>
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
