@@ -16,6 +16,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
@@ -90,8 +91,6 @@ public class ReproductorCanciones {
             if(!imagen.exists()){
                throw new CreatorOSTException("Imagen OST no descargada");
             }
-            //abrimos el OBS
-            inicializarOBS();
             //abrimos la ventana
             inicializarVentana(d1.getRespuesta());
             //ok, hora de descargar el disco
@@ -116,7 +115,7 @@ public class ReproductorCanciones {
                    lcancion.add(c);
                 }             
             }
-
+           Collections.sort(lcancion);
            //ok todo listo, ahora es hora de iniciar la reproducción
            iniciarGrabacion(d1.getRespuesta());
            //ahora empezamos a reproducir
@@ -194,7 +193,7 @@ public class ReproductorCanciones {
             textocancion.setFont(font);
             textocancion.setBackground(Color.WHITE);
             textocancion.setOpaque(true);
-            textocancion.setBounds(0, 598, 1262, 75);
+            textocancion.setBounds(0, 630, 1280, 75);
             Border border = BorderFactory.createLineBorder(Color.BLACK, 2);
             textocancion.setBorder(border);
         }
@@ -301,7 +300,13 @@ public class ReproductorCanciones {
 
     private String leerToken() throws FileNotFoundException, CreatorOSTException{
        //el fichero esta en la raiz de donde se ejecuta el programa
-       File f = new File("./token.txt");
+       File f;
+       if(Utils.windowsOrLinux()){
+           f = new File(Utils.dameRutaWindowsBasic() + "token.txt");
+       }else{
+           f = new File(Constantes.RUTA_UNIX_BASICA + "token.txt");
+       }
+
        //Si llega aqui es que al menos existe el fichero
        Scanner lector = new Scanner(f);
        if(!lector.hasNextLine()){
@@ -370,18 +375,6 @@ public class ReproductorCanciones {
         catch(IOException | InterruptedException e){
             throw new CreatorOSTException(e.getMessage());
         }
-    }
-
-    private void inicializarOBS() throws IOException,InterruptedException {
-        Process p;
-        if(Utils.windowsOrLinux()){
-            p = Runtime.getRuntime().exec("cmd /c start /d \"C:\\Program Files\\obs-studio\\bin\\64bit\\\" obs64.exe --profile \"OST\" --scene \"OST\" --minimize-to-tray");
-        }
-        else{
-             //TODO revisar
-            p = Runtime.getRuntime().exec("obs --profile \"OST\" --scene \"OST\" --minimize-to-tray");
-        }
-        p.waitFor(10, TimeUnit.SECONDS);
     }
 
     private void iniciarGrabacion(String nombreDisco) throws AWTException{

@@ -58,6 +58,10 @@ public class Utils {
         catch(InterruptedException e){}
     }
     
+    public static String dameRutaWindowsBasic(){
+        return Constantes.RUTA_WINDOWS_BASICA.replaceAll("%%usuario%%",  System.getProperty("user.name"));
+    }
+    
     public static String dameRutaWindowsOST(){
         return Constantes.RUTA_WINDOWS.replaceAll("%%usuario%%",  System.getProperty("user.name"));
     }
